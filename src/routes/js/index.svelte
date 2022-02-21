@@ -1,0 +1,63 @@
+<script context="module">
+	let cat = 'js';
+	export function preload() {
+		const req1 = this.fetch('/posts?cat=' + cat).then(r => r.json())
+		const req2 = this.fetch('token').then(r => r.json())
+		return 	Promise.all([
+			req1, req2
+		])
+		.then(([posts, user]) => {
+			return { posts, user };
+		})
+	}
+</script>
+
+<script>
+	import TitleContainer from '../../components/TitleContainer.svelte';
+	import Catalog from '../../components/Catalog.svelte';
+	import PopupAddContent from '../../components/PopupAddContent.svelte';
+
+	export let posts;
+	export let user;
+
+	let masspopup = {
+		popup: false,
+		fields: [],
+		data: []
+	};
+
+	let id, newPost;
+</script>
+
+<svelte:head>
+	<title>Верстка</title>
+</svelte:head>
+
+{#if masspopup.popup}
+	<PopupAddContent 
+		bind:isOpen={masspopup.popup} 
+		fields={masspopup.fields} 
+		typeEvent={masspopup.typeEvent}
+		category={masspopup.category}
+		bind:content={masspopup.data}
+		on:updateData={(event) => { 
+			id = event.detail;
+			posts[posts.forEach(function(post, i){if(post.id === id.id){return i}})] = masspopup.data;
+	 	}}
+		on:insertData={(event) => { 
+			newPost = event.detail;
+			posts = [...posts, newPost.newPost];
+	 	}}
+	/>
+{/if}
+
+<div class="wrap">
+	<div class="work">
+		<TitleContainer title="Верстка" />
+		<Catalog {posts} category="js" cat="js" {user} on:getData={(event) => { masspopup = event.detail; }} on:addData={(event) => { masspopup = event.detail; }} />
+	</div>
+</div>
+
+<style>
+
+</style>
