@@ -1,0 +1,7 @@
+{"apps":[{
+   "name": "fe",
+   "script": "./__sapper__/build/index.js",
+   "instances": 2,
+   "exec_mode": "cluster",
+   "max_memory_restart": "300M"
+}]}
