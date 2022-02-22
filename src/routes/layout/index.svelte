@@ -33,7 +33,18 @@
 </script>
 
 <svelte:head>
-	<OpenGraph opengraph={opengraph[0]} />
+	<title>{opengraph[0].title}</title>
+	<meta name="description" content="{opengraph[0].description}" />
+	<meta property="og:type" content="{opengraph[0].og_type}" />
+	<meta property="og:title" content="{opengraph[0].og_title}" />
+	<meta property="og:description" content="{opengraph[0].og_description}" />
+	<meta property="og:url" content="{opengraph[0].og_url}">
+	<meta property="og:image" content="{opengraph[0].og_image}">
+	<meta property="og:image:type" content="{opengraph[0].og_image_type}" />
+	<meta property="og:image:width" content="{opengraph[0].og_image_width}">
+	<meta property="og:image:height" content="{opengraph[0].og_image_height}">
+	<meta name="twitter:title" content="{opengraph[0].og_title}">
+	<meta name="twitter:description" content="{opengraph[0].og_description}">
 </svelte:head>
 
 {#if masspopup.popup}
