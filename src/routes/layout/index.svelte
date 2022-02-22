@@ -2,12 +2,13 @@
 	let cat = 'layout';
 	export function preload() {
 		const req1 = this.fetch('/posts?cat=' + cat).then(r => r.json())
-		const req2 = this.fetch('token').then(r => r.json())
+		const req2 = this.fetch('/opengraph?name=' + cat).then(r => r.json())
+		const req3 = this.fetch('token').then(r => r.json())
 		return 	Promise.all([
-			req1, req2
+			req1, req2, req3
 		])
-		.then(([posts, user]) => {
-			return { posts, user };
+		.then(([posts, opengraph, user]) => {
+			return { posts, opengraph, user };
 		})
 	}
 </script>
@@ -16,8 +17,10 @@
 	import TitleContainer from '../../components/TitleContainer.svelte';
 	import Catalog from '../../components/Catalog.svelte';
 	import PopupAddContent from '../../components/PopupAddContent.svelte';
+	import OpenGraph from '../../components/OpenGraph.svelte';
 
 	export let posts;
+	export let opengraph;
 	export let user;
 
 	let masspopup = {
@@ -30,7 +33,7 @@
 </script>
 
 <svelte:head>
-	<title>Верстка</title>
+	<OpenGraph opengraph={opengraph[0]} />
 </svelte:head>
 
 {#if masspopup.popup}
