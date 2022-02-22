@@ -1,12 +1,13 @@
 <script context="module">
 	export function preload({params}) {
 		const req1 = this.fetch('/post?slug=' + params.slug).then(r => r.json())
-		const req2 = this.fetch('token').then(r => r.json())
+		const req2 = this.fetch('/opengraph?name=' + params.slug).then(r => r.json())
+		const req3 = this.fetch('token').then(r => r.json())
 		return 	Promise.all([
-			req1, req2
+			req1, req2, req3
 		])
-		.then(([post, user]) => {
-			return { post, user };
+		.then(([post, opengraph, user]) => {
+			return { post, opengraph, user };
 		})
 	}
 </script>
@@ -16,6 +17,7 @@
 	import { isAdmin } from '../../store.js';
 	import BtnEdit from '../../components/BtnEdit.svelte';
 	import PopupAddContent from '../../components/PopupAddContent.svelte';
+	import OpenGraph from '../../components/OpenGraph.svelte';
 
 	import PostTag from '../../components/PostTag.svelte';
 	import Popup from '../../components/Popup.svelte';
@@ -25,6 +27,7 @@
 	export let user;
 	isAdmin.set(user.isAdmin);
 	export let post;
+	export let opengraph;
 
 	let masspopup = {
 		popup: false,
@@ -104,7 +107,7 @@
 </script>
 
 <svelte:head>
-	<title>{post[0].title}</title>
+	<OpenGraph opengraph={opengraph[0]} />
 	{#if post[0].includecss != ''}
 		<link rel="stylesheet" href="{post[0].includecss}">
 	{/if}
