@@ -17,7 +17,7 @@
 		<div class="mainmenu__container">
 			<a class="logo" href="/"><span>frontend-expert</span>.ru</a>
 			<nav class="mainmenu">
-				<div class="mobmenu" on:click={openMobMenu}></div>
+				<div class="mobmenu" class:open={isOpenMenu} on:click={openMobMenu}></div>
 				<div class="container" class:open={isOpenMenu}>
 					<ul class="list">
 						<li class="item"><a class="link {segment === undefined ? 'curent' : undefined}" on:click={clickLink} href=".">Главная</a></li>
@@ -92,7 +92,15 @@
 		display: flex;
 		width: 40px;
 		height: 40px;
-		background-color: #fff;
+		background-image: url(/svg/menu.svg);
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-size: 36px 36px;
+	}
+
+	.mobmenu.open{
+		background-image: url(/svg/close-white.svg);
+		background-size: 40px 40px;
 	}
 
 	.container{
