@@ -6,12 +6,13 @@
 		const req1 = this.fetch('/posts?cat=' + catAbout).then(r => r.json())
 		const req2 = this.fetch('/posts?cat=' + catEducation).then(r => r.json())
 		const req3 = this.fetch('/posts?cat=' + catCareer).then(r => r.json())
-		const req4 = this.fetch('token').then(r => r.json())
+		const req4 = this.fetch('/opengraph?name=' + catAbout).then(r => r.json())
+		const req5 = this.fetch('token').then(r => r.json())
 		return 	Promise.all([
-			req1, req2, req3, req4
+			req1, req2, req3, req4, req5
 		])
-		.then(([postsAbout, postsEducation, postsCareer, user]) => {
-			return { postsAbout, postsEducation, postsCareer, user };
+		.then(([postsAbout, postsEducation, postsCareer, opengraph, user]) => {
+			return { postsAbout, postsEducation, postsCareer, opengraph, user };
 		})
 	}
 </script>
@@ -21,12 +22,14 @@
 	import Chronology from '../components/Chronology.svelte';
 	import BtnEdit from '../components/BtnEdit.svelte';
 	import PopupAddContent from '../components/PopupAddContent.svelte';
+	import OpenGraph from '../components/OpenGraph.svelte';
 	
 	export let user;
 	isAdmin.set(user.isAdmin);
 	export let postsAbout;
 	export let postsEducation;
 	export let postsCareer;
+	export let opengraph;
 
 	let masspopup = {
 		popup: false,
@@ -39,7 +42,7 @@
 </script>
 
 <svelte:head>
-	<title>О себе</title>
+	<OpenGraph opengraph={opengraph[0]} />
 </svelte:head>
 
 {#if masspopup.popup}

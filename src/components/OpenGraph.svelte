@@ -14,3 +14,9 @@
 <meta property="og:image:height" content="{opengraph.og_image_height}">
 <meta name="twitter:title" content="{opengraph.og_title}">
 <meta name="twitter:description" content="{opengraph.og_description}">
+{#if Object.keys(opengraph.og_profile).length !== 0}
+<meta property="og:profile:first_name" content="{opengraph.og_profile.first_name}" />
+<meta property="og:profile:last_name" content="{opengraph.og_profile.last_name}" />
+<meta property="og:profile:username" content="{opengraph.og_profile.username}" />
+<meta property="og:profile:gender" content="{opengraph.og_profile.gender}" />
+{/if}
