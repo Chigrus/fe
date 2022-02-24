@@ -81,7 +81,7 @@
 					</div>
 				</div>
 				<div class="about__content">
-					<div class="about__title">
+					<h1 class="about__title">
 						{post.title}
 						{#if $isAdmin}
 						<BtnEdit 
@@ -95,7 +95,7 @@
 							]} 
 						/>
 						{/if}
-					</div>
+					</h1>
 					<div class="about__subtitle">{post.subtitle}</div>
 					<ul class="about__soclist">
 						<li class="about__socitem">
