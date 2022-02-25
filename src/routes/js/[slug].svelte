@@ -16,6 +16,9 @@
 	import { isAdmin } from '../../store.js';
 	import BtnEdit from '../../components/BtnEdit.svelte';
 	import PopupAddContent from '../../components/PopupAddContent.svelte';
+	import Widget from '../../components/Widget.svelte';
+	import WidgetPost from '../../components/WidgetPost.svelte';
+	import WidgetYoutube from '../../components/WidgetYoutube.svelte';
 
 	export let user;
 	isAdmin.set(user.isAdmin);
@@ -74,21 +77,19 @@
 				<div class="post">{@html post[0].text}</div>
 			</div>
 			<div class="sidebar">
-				<div class="widget">
-					<div class="widget__title">Свежие публикации</div>
-					<div class="widget__block"></div>
-					<div class="widget__block"></div>
-					<div class="widget__block"></div>
-				</div>
-				<div class="widget">
-					<div class="widget__title">Мои ролики на ютубе</div>
-					<div class="widget__ytblocks">
-						<div class="widget__ytblock"></div>
-						<div class="widget__ytblock"></div>
-						<div class="widget__ytblock"></div>
-						<div class="widget__ytblock"></div>
+				<Widget>
+					<div slot="title">Свежие публикации</div>
+					<div slot="content">
+						<WidgetPost />
 					</div>
-				</div>
+				</Widget>
+				<Widget>
+					<div slot="title">Мои ролики на ютубе</div>
+					<div slot="content">
+						<WidgetYoutube />
+						<WidgetYoutube />
+					</div>
+				</Widget>
 			</div>
 		</div>
 	</div>
@@ -174,6 +175,13 @@
     line-height: 1.5em;
     font-size: 16px;
 	margin-top: 10px;
+}
+
+.sidebar{
+	float: left;
+	width: 300px;
+	box-sizing: border-box;
+	padding-left: 40px;
 }
 
 @media only screen and (max-width: 1199px){

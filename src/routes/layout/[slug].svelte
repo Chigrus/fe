@@ -1,5 +1,5 @@
 <script context="module">
-	export function preload({params}) {
+	export function preload({params}) {;
 		const req1 = this.fetch('/post?slug=' + params.slug).then(r => r.json())
 		const req2 = this.fetch('/opengraph?name=' + params.slug).then(r => r.json())
 		const req3 = this.fetch('token').then(r => r.json())
@@ -18,6 +18,9 @@
 	import BtnEdit from '../../components/BtnEdit.svelte';
 	import PopupAddContent from '../../components/PopupAddContent.svelte';
 	import OpenGraph from '../../components/OpenGraph.svelte';
+	import Widget from '../../components/Widget.svelte';
+	import WidgetPost from '../../components/WidgetPost.svelte';
+	import WidgetYoutube from '../../components/WidgetYoutube.svelte';
 
 	import PostTag from '../../components/PostTag.svelte';
 	import Popup from '../../components/Popup.svelte';
@@ -174,21 +177,19 @@
 				</div>
 			</div>
 			<div class="sidebar">
-				<div class="widget">
-					<div class="widget__title">Свежие публикации</div>
-					<div class="widget__block"></div>
-					<div class="widget__block"></div>
-					<div class="widget__block"></div>
-				</div>
-				<div class="widget">
-					<div class="widget__title">Мои ролики на ютубе</div>
-					<div class="widget__ytblocks">
-						<div class="widget__ytblock"></div>
-						<div class="widget__ytblock"></div>
-						<div class="widget__ytblock"></div>
-						<div class="widget__ytblock"></div>
+				<Widget>
+					<div slot="title">Свежие публикации</div>
+					<div slot="content">
+						<WidgetPost />
 					</div>
-				</div>
+				</Widget>
+				<Widget>
+					<div slot="title">Мои ролики на ютубе</div>
+					<div slot="content">
+						<WidgetYoutube />
+						<WidgetYoutube />
+					</div>
+				</Widget>
 			</div>
 		</div>
 	</div>
@@ -244,44 +245,6 @@
 	width: 300px;
 	box-sizing: border-box;
 	padding-left: 40px;
-}
-
-.widget{
-	float: left;
-	width: 100%;
-	margin-bottom: 20px;
-}
-
-.widget__title{
-	float: left;
-	width: 100%;
-	font-weight: bold;
-}
-
-.widget__block{
-	float: left;
-	width: 100%;
-	height: 130px;
-	background-color: rgba(0,0,0,0.1);
-	margin-top: 15px;
-}
-
-.widget__ytblocks{
-	float: left;
-	width: 100%;
-	margin-top: 10px;
-}
-
-.widget__ytblock{
-	float: left;
-	width: calc(100%/2 - 5px);
-	margin: 5px 0;
-	height: 100px;
-	background-color: rgba(0,0,0,0.1);
-}
-
-.widget__ytblock:nth-child(2n){
-	margin-left: 10px;
 }
 
 @media only screen and (max-width: 1199px){
