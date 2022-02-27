@@ -3,12 +3,22 @@
 	export let idEditor = 0;
     export let isHtml = true;
     export let isLook = false;
+    export let isCounter = {isShow: false, min: 0, max: 5000};
     export let isHeightAuto = false;
     export let buttons = ['viewHtml', 'p', 'b', 'i','q'];
+    export let title = "";
     
     let selection, range, objEditor, objEditorID, curentRangeTag;
 
     let panel = [];
+
+    let isGood = false;
+
+    let countCharacters = textEditor.length;
+
+    if (countCharacters >= isCounter.min && countCharacters <= isCounter.max){
+        isGood = true;
+    }
 
     function cutTegs(str) {
         const result = str.replace(/<[^>]+>/g,'');
@@ -149,7 +159,13 @@
         }
     }
 
-    function onKeyDown(e) {
+    function onKeyUp(e) {
+        countCharacters = e.target.outerText.length;
+        if (countCharacters >= isCounter.min && countCharacters <= isCounter.max){
+            isGood = true;
+        }else{
+            isGood = false;
+        }
     }
 
     function btnClick(){
@@ -276,9 +292,13 @@
         {#each panel as btn, i}
             <button class="btn" class:active={btn.isActive} on:click="{btnClick}" name="{btn.name}" value="{i}">{btn.name}</button>
         {/each}
+        {@html title}
+        {#if isCounter.isShow}
+            <span class="counter" class:good={isGood}>{countCharacters}</span>
+        {/if}
     </div>
     {#if isHtml}
-        <div class="editor" id="editor{idEditor}" contenteditable="true" on:mouseup={onMouseUp} on:keydown={onKeyDown} bind:innerHTML={textEditor}></div>
+        <div class="editor" id="editor{idEditor}" contenteditable="true" on:mouseup={onMouseUp} on:keyup={onKeyUp} bind:innerHTML={textEditor}></div>
     {:else}
         <div class="editor" contenteditable="true" spellcheck="false" bind:textContent={textEditor}></div>
     {/if}
@@ -302,12 +322,28 @@
 		width: 100%;
     }
     .panel{
+        position: relative;
         float: left;
         width: 100%;
         box-sizing: border-box;
         border: 1px solid #000;
         border-bottom: 0;
         padding: 5px;
+        background-color: rgba(66,50,50,0.1)
+    }
+    .counter{
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        height: 34px;
+        background-color: #ee3f02;
+        color: #fff;
+        padding: 0 10px;
+    }
+    .counter.good{
+        background-color: green;
     }
     .btn{
         float: left;
