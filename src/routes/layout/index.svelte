@@ -43,6 +43,7 @@
 
 	let cropData;
 	let isUploadImage;
+	let isEditOgImage = false;
 
 	let cropSize = {width: 1200, height: 630};
 
@@ -50,6 +51,10 @@
 
 	function openGraphEdit(){
 		isOpenGraphEdit = true;
+	}
+
+	function clickEditOgImage(){
+		isEditOgImage = true;
 	}
 
 	async function openGraphSave(){
@@ -91,7 +96,11 @@
 				<VisualEditor bind:textEditor="{opengraph[0].og_url}" idEditor="{opengraph[0].id}" isHeightAuto="true" buttons={[]} title="<b>og:url</b> - каноническая ссылка" />
 			</div>
 			<div class="line">
-				<div class="og_image_title"><b>og:image</b> - изображение поста</div>
+				<div class="og_image_title">
+					<b>og:image</b> - изображение поста
+					<span class="btnEditOgImage" class:hide={isEditOgImage} on:click="{clickEditOgImage}"></span>
+				</div>
+				{#if isEditOgImage}
 				<div class="cropper">
 					<Cropper 
 						image={opengraph[0].og_image}
@@ -108,6 +117,9 @@
 				<div class="imgInfo">
 					<ButtonUploadFile bind:imgFile={opengraph[0].og_image} bind:imgUpload={isUploadImage} />
 				</div>
+				{:else}
+				<img src="{opengraph[0].og_image}" alt="" />
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -168,6 +180,11 @@
 	margin-bottom: 10px;
 }
 
+.line img{
+	max-width: 100%;
+	height: auto;
+}
+
 .line:last-child{
 	margin-bottom: 0;
 }
@@ -200,5 +217,23 @@
 	border-top: 1px solid #423232;
     padding: 10px;
 	box-sizing: border-box;
+}
+
+.btnEditOgImage{
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	display: flex;
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+    background-image: url(/svg/edit.svg);
+    background-size: 80%;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.btnEditOgImage.hide{
+	display: none;
 }
 </style>
