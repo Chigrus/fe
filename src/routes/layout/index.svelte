@@ -50,7 +50,7 @@
 	<OpenGraphEditor bind:dataOpenGraph={opengraph[0]}  bind:isOpenGraphEdit={isOpenGraphEdit} />
 {/if}
 
-{#if isAdmin}
+{#if $isAdmin}
 <AdminButtons>
 	<BtnAdminEdit title="" bg="opengraph" on:click="{openGraphEdit}" />
 </AdminButtons>
