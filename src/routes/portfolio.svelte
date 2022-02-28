@@ -21,7 +21,8 @@
 
 	export let posts;
 	export let opengraph;
-	//export let user;
+	export let user;
+	isAdmin.set(user.isAdmin);
 
 	let isOpenGraphEdit = false;
 
