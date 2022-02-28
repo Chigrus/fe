@@ -76,7 +76,7 @@
 				<VisualEditor bind:textEditor="{opengraph[0].title}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>title</b> - длина от 40 до 60 символов" />
 			</div>
 			<div class="line">
-				<VisualEditor bind:textEditor="{opengraph[0].description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 120, max: 220}}" buttons={[]} title="<b>description</b> - длина от 120 до 220 символов" />
+				<VisualEditor bind:textEditor="{opengraph[0].description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 120, max: 135}}" buttons={[]} title="<b>description</b> - длина от 120 до 220 символов" />
 			</div>
 			<div class="line">
 				<VisualEditor bind:textEditor="{opengraph[0].og_type}" idEditor="{opengraph[0].id}" isHeightAuto="true" buttons={[]} title="<b>og:type</b> - тип объекта (website, article, profile)" />
@@ -85,10 +85,7 @@
 				<VisualEditor bind:textEditor="{opengraph[0].og_title}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>og:title</b> - тег заголовка для микроразметки" />
 			</div>
 			<div class="line">
-				<VisualEditor bind:textEditor="{opengraph[0].og_description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 120, max: 220}}" buttons={[]} title="<b>og:description</b> - тег описание объекта на странице" />
-			</div>
-			<div class="line">
-				<VisualEditor bind:textEditor="{opengraph[0].og_twitter_description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 0, max: 135}}" buttons={[]} title="<b>og:og_twitter_description</b> - тег описание объекта на странице" />
+				<VisualEditor bind:textEditor="{opengraph[0].og_description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 120, max: 135}}" buttons={[]} title="<b>og:description</b> - тег описание объекта на странице" />
 			</div>
 			<div class="line">
 				<VisualEditor bind:textEditor="{opengraph[0].og_url}" idEditor="{opengraph[0].id}" isHeightAuto="true" buttons={[]} title="<b>og:url</b> - каноническая ссылка" />
