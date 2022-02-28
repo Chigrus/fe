@@ -47,3 +47,15 @@ export const savePostJson = async (post, params) => {
         }),
     });
 };
+
+export const saveOpenGraph = async (data) => {
+    await fetch('/saveopengraph', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            data,
+        }),
+    });
+};

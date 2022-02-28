@@ -15,6 +15,9 @@
         <div class="content">
             <slot name="content"></slot>
         </div>
+        <div class="bottom">
+            <slot name="bottom"></slot>
+        </div>
     </div>
 </div>
 
@@ -78,6 +81,10 @@
 
 .content:empty{
     padding: 0;
+}
+
+.bottom{
+    width: 100%;
 }
 
 @media only screen and (max-width: 639px){

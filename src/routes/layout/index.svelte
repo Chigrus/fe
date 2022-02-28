@@ -22,8 +22,12 @@
 	import BtnAdminEdit from '../../components/BtnAdminEdit.svelte';
 	import Popup from '../../components/Popup.svelte';
 	import VisualEditor from '../../components/VisualEditor.svelte';
+	import Button from '../../components/Button.svelte';
 	import { isAdmin } from '../../store.js';
 	import Cropper from "svelte-easy-crop";
+	import ButtonUploadFile from '../../components/ButtonUploadFile.svelte';
+	import { cropImage } from '../../domain';
+	import { saveOpenGraph, uploadImage } from '../../requests';
 
 	export let posts;
 	export let opengraph;
@@ -38,11 +42,22 @@
 	let id, newPost;
 
 	let cropData;
+	let isUploadImage;
+
+	let cropSize = {width: 1200, height: 630};
 
 	let isOpenGraphEdit = false;
 
 	function openGraphEdit(){
 		isOpenGraphEdit = true;
+	}
+
+	async function openGraphSave(){
+		const blob = await cropImage(opengraph[0].og_image, cropData, cropSize, 'image/jpeg', 1);
+		opengraph[0].og_image = await uploadImage('image/jpeg', blob);
+		opengraph[0].og_image = 'https://frontend-expert.ru' + opengraph[0].og_image;
+		saveOpenGraph(opengraph[0]);
+		//console.log(opengraph[0]);
 	}
 </script>
 
@@ -54,38 +69,49 @@
 <Popup bind:isOpen="{isOpenGraphEdit}">
 	<div slot="title">Редактировать Open Graph</div>
 	<div class="og_content" slot="content">
-		<div class="line">
-			<VisualEditor textEditor="{opengraph[0].title}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>title</b> - длина от 40 до 60 символов" />
-		</div>
-		<div class="line">
-			<VisualEditor textEditor="{opengraph[0].description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 120, max: 220}}" buttons={[]} title="<b>description</b> - длина от 120 до 220 символов" />
-		</div>
-		<div class="line">
-			<VisualEditor textEditor="{opengraph[0].og_type}" idEditor="{opengraph[0].id}" isHeightAuto="true" buttons={[]} title="<b>og:type</b> - тип объекта (website, article, profile)" />
-		</div>
-		<div class="line">
-			<VisualEditor textEditor="{opengraph[0].og_title}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>og:title</b> - тег заголовка для микроразметки" />
-		</div>
-		<div class="line">
-			<VisualEditor textEditor="{opengraph[0].og_description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>og:description</b> - тег описание объекта на странице" />
-		</div>
-		<div class="line">
-			<VisualEditor textEditor="{opengraph[0].og_url}" idEditor="{opengraph[0].id}" isHeightAuto="true" buttons={[]} title="<b>og:url</b> - каноническая ссылка" />
-		</div>
-		<div class="line">
-			<div class="cropper">
-				<Cropper 
-					image={opengraph[0].og_image}
-					crop={{ x: 0, y: 0 }}
-					zoom={1}
-					minZoom={0.8}
-					maxZoom={2}
-					cropSize = {{ width: 250, height: 250 }}
-					zoomSpeed={0.1}
-					restrictPosition={false}
-					on:cropcomplete={(event) => cropData = event.detail.pixels}
-				/>
+		<div class="og_inner">
+			<div class="line">
+				<VisualEditor bind:textEditor="{opengraph[0].title}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>title</b> - длина от 40 до 60 символов" />
 			</div>
+			<div class="line">
+				<VisualEditor bind:textEditor="{opengraph[0].description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 120, max: 220}}" buttons={[]} title="<b>description</b> - длина от 120 до 220 символов" />
+			</div>
+			<div class="line">
+				<VisualEditor bind:textEditor="{opengraph[0].og_type}" idEditor="{opengraph[0].id}" isHeightAuto="true" buttons={[]} title="<b>og:type</b> - тип объекта (website, article, profile)" />
+			</div>
+			<div class="line">
+				<VisualEditor bind:textEditor="{opengraph[0].og_title}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>og:title</b> - тег заголовка для микроразметки" />
+			</div>
+			<div class="line">
+				<VisualEditor bind:textEditor="{opengraph[0].og_description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>og:description</b> - тег описание объекта на странице" />
+			</div>
+			<div class="line">
+				<VisualEditor bind:textEditor="{opengraph[0].og_url}" idEditor="{opengraph[0].id}" isHeightAuto="true" buttons={[]} title="<b>og:url</b> - каноническая ссылка" />
+			</div>
+			<div class="line">
+				<div class="og_image_title"><b>og:image</b> - изображение поста</div>
+				<div class="cropper">
+					<Cropper 
+						image={opengraph[0].og_image}
+						crop={{ x: 0, y: 0 }}
+						zoom={1}
+						minZoom={0.8}
+						maxZoom={2}
+						aspect = {1200/630}
+						zoomSpeed={0.1}
+						restrictPosition={false}
+						on:cropcomplete={(event) => cropData = event.detail.pixels}
+					/>
+				</div>
+				<div class="imgInfo">
+					<ButtonUploadFile bind:imgFile={opengraph[0].og_image} bind:imgUpload={isUploadImage} />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div slot="bottom">
+		<div class="lineSave">
+			<Button title="Сохранить" on:click="{openGraphSave}" />
 		</div>
 	</div>
 </Popup>
@@ -125,9 +151,13 @@
 <style>
 .og_content{
 	display: inline-block;
-	max-width: 640px;
+	padding-right: 10px;
 	max-height: 60vh;
 	overflow-y: auto;
+}
+
+.og_inner{
+	width: 600px;
 }
 
 .line{
@@ -140,12 +170,33 @@
 	margin-bottom: 0;
 }
 
+.og_image_title{
+	position: relative;
+    float: left;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: rgba(66, 50, 50, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.5);
+    border-image: initial;
+    padding: 5px;
+}
+
 .cropper{
     position: relative;
     float: left;
     width: 100%;
-    height: 250px;
+    height: 380px;
     overflow: hidden;
     margin-bottom: 5px;
+	box-sizing: border-box;
+}
+
+.lineSave{
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	border-top: 1px solid #423232;
+    padding: 10px;
+	box-sizing: border-box;
 }
 </style>
