@@ -18,6 +18,9 @@
 	import BtnEdit from '../../components/BtnEdit.svelte';
 	import PopupAddContent from '../../components/PopupAddContent.svelte';
 	import OpenGraph from '../../components/OpenGraph.svelte';
+	import AdminButtons from '../../components/AdminButtons.svelte';
+	import BtnAdminEdit from '../../components/BtnAdminEdit.svelte';
+	import OpenGraphEditor from '../../components/OpenGraphEditor.svelte';
 	import Widget from '../../components/Widget.svelte';
 	import WidgetPost from '../../components/WidgetPost.svelte';
 	import WidgetYoutube from '../../components/WidgetYoutube.svelte';
@@ -49,6 +52,12 @@
 	let isAddNode = false;
 
 	textPost = textPost.sort((a, b) => a.id - b.id);
+
+	let isOpenGraphEdit = false;
+
+	function openGraphEdit(){
+		isOpenGraphEdit = true;
+	}
 
 	function editPost(){
 		isAdminV = true;
@@ -115,6 +124,16 @@
 		<link rel="stylesheet" href="{post[0].includecss}">
 	{/if}
 </svelte:head>
+
+{#if isOpenGraphEdit}
+	<OpenGraphEditor bind:dataOpenGraph={opengraph[0]}  bind:isOpenGraphEdit={isOpenGraphEdit} />
+{/if}
+
+{#if isAdmin}
+<AdminButtons>
+	<BtnAdminEdit title="" bg="opengraph" on:click="{openGraphEdit}" />
+</AdminButtons>
+{/if}
 
 <Popup bind:isOpen={isAddNode}>
 	<slot slot="title">

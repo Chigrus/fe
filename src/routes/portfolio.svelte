@@ -1,23 +1,48 @@
 <script context="module">
+	let cat = 'portfolio';
 	export function preload() {
 		const req1 = this.fetch('portfoliodata').then(r => r.json())
-		const req2 = this.fetch('token').then(r => r.json())
-		return Promise.all([req1, req2])
-		.then(([posts, user]) => {
-			return { posts, user };
+		const req2 = this.fetch('/opengraph?name=' + cat).then(r => r.json())
+		const req3 = this.fetch('token').then(r => r.json())
+		return Promise.all([req1, req2, req3])
+		.then(([posts, opengraph, user]) => {
+			return { posts, opengraph, user };
 		})
 	}
 </script>
 
 <script>
 	import PortfolioCart from '../components/PortfolioCart.svelte';
+	import OpenGraph from '../components/OpenGraph.svelte';
+	import AdminButtons from '../components/AdminButtons.svelte';
+	import BtnAdminEdit from '../components/BtnAdminEdit.svelte';
+	import OpenGraphEditor from '../components/OpenGraphEditor.svelte';
+	import { isAdmin } from '../store.js';
 
 	export let posts;
+	export let opengraph;
+	//export let user;
+
+	let isOpenGraphEdit = false;
+
+	function openGraphEdit(){
+	isOpenGraphEdit = true;
+}
 </script>
 
 <svelte:head>
-	<title>Портфолио</title>
+	<OpenGraph opengraph={opengraph[0]} />
 </svelte:head>
+
+{#if isOpenGraphEdit}
+	<OpenGraphEditor bind:dataOpenGraph={opengraph[0]}  bind:isOpenGraphEdit={isOpenGraphEdit} />
+{/if}
+
+{#if isAdmin}
+<AdminButtons>
+	<BtnAdminEdit title="" bg="opengraph" on:click="{openGraphEdit}" />
+</AdminButtons>
+{/if}
 
 <div class="wrap">
 	<div class="work">

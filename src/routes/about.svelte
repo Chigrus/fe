@@ -23,6 +23,9 @@
 	import BtnEdit from '../components/BtnEdit.svelte';
 	import PopupAddContent from '../components/PopupAddContent.svelte';
 	import OpenGraph from '../components/OpenGraph.svelte';
+	import AdminButtons from '../components/AdminButtons.svelte';
+	import BtnAdminEdit from '../components/BtnAdminEdit.svelte';
+	import OpenGraphEditor from '../components/OpenGraphEditor.svelte';
 	
 	export let user;
 	isAdmin.set(user.isAdmin);
@@ -39,11 +42,26 @@
 	
 	let id;
 
+	let isOpenGraphEdit = false;
+
+	function openGraphEdit(){
+		isOpenGraphEdit = true;
+	}
 </script>
 
 <svelte:head>
 	<OpenGraph opengraph={opengraph[0]} />
 </svelte:head>
+
+{#if isOpenGraphEdit}
+	<OpenGraphEditor bind:dataOpenGraph={opengraph[0]}  bind:isOpenGraphEdit={isOpenGraphEdit} />
+{/if}
+
+{#if isAdmin}
+<AdminButtons>
+	<BtnAdminEdit title="" bg="opengraph" on:click="{openGraphEdit}" />
+</AdminButtons>
+{/if}
 
 {#if masspopup.popup}
 	<PopupAddContent 
