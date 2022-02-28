@@ -53,11 +53,13 @@
 	}
 
 	async function openGraphSave(){
-		const blob = await cropImage(opengraph[0].og_image, cropData, cropSize, 'image/jpeg', 1);
-		opengraph[0].og_image = await uploadImage('image/jpeg', blob);
-		opengraph[0].og_image = 'https://frontend-expert.ru' + opengraph[0].og_image;
+		if (isUploadImage){
+			const blob = await cropImage(opengraph[0].og_image, cropData, cropSize, 'image/jpeg', 1);
+			opengraph[0].og_image = await uploadImage('image/jpeg', blob);
+			opengraph[0].og_image = 'https://frontend-expert.ru' + opengraph[0].og_image;
+		}
 		saveOpenGraph(opengraph[0]);
-		//console.log(opengraph[0]);
+		isOpenGraphEdit = false;
 	}
 </script>
 
@@ -83,7 +85,10 @@
 				<VisualEditor bind:textEditor="{opengraph[0].og_title}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>og:title</b> - тег заголовка для микроразметки" />
 			</div>
 			<div class="line">
-				<VisualEditor bind:textEditor="{opengraph[0].og_description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 40, max: 60}}" buttons={[]} title="<b>og:description</b> - тег описание объекта на странице" />
+				<VisualEditor bind:textEditor="{opengraph[0].og_description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 120, max: 220}}" buttons={[]} title="<b>og:description</b> - тег описание объекта на странице" />
+			</div>
+			<div class="line">
+				<VisualEditor bind:textEditor="{opengraph[0].og_twitter_description}" idEditor="{opengraph[0].id}" isHeightAuto="true" isCounter="{{isShow: true, min: 0, max: 135}}" buttons={[]} title="<b>og:og_twitter_description</b> - тег описание объекта на странице" />
 			</div>
 			<div class="line">
 				<VisualEditor bind:textEditor="{opengraph[0].og_url}" idEditor="{opengraph[0].id}" isHeightAuto="true" buttons={[]} title="<b>og:url</b> - каноническая ссылка" />

@@ -13,7 +13,7 @@
 <meta property="og:image:width" content="{opengraph.og_image_width}">
 <meta property="og:image:height" content="{opengraph.og_image_height}">
 <meta name="twitter:title" content="{opengraph.og_title}">
-<meta name="twitter:description" content="{opengraph.og_description}">
+<meta name="twitter:description" content="{opengraph.og_twitter_description}">
 {#if opengraph.og_type === 'profile'}
 <meta property="og:profile:first_name" content="{opengraph.og_profile.first_name}" />
 <meta property="og:profile:last_name" content="{opengraph.og_profile.last_name}" />
