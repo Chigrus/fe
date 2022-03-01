@@ -25,7 +25,8 @@
                 />
                 {/if}
                 <span class="date">{post.subtitle}</span>
-                <h2 class="itemTitle">{post.title}</h2>
+                {#if catName === 'education'}<h2 class="itemTitle" itemprop="alumniOf">{post.title}</h2>{/if}
+                {#if catName === 'career'}<h2 class="itemTitle" itemprop="affiliation">{post.title}</h2>{/if}
                 <div class="itemText">{@html post.text}</div>
             </div>
         {/each}

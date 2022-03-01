@@ -78,68 +78,69 @@
 	/>
 {/if}
 
-
-<div class="wrap white">
-	<div class="work">
-		<div class="about">
-			{#each postsAbout as post}
-				<div class="photoBlock">
-					<div class="photo">
-						{#if $isAdmin}
-						<BtnEdit 
-							on:getData={(event) => { masspopup = event.detail; }} 
-							dataEdit={post}
-							typeEvent='Update'
-							fields={[
-								{field: 'image', type: 'image', alt: post.image_alt, cropSize: {width: 400, height: 400}}
-							]} 
-						/>
-						{/if}
-						<img src="{post.image}" alt="{post.image_alt}" />
+<div itemscope itemtype="http://schema.org/Person">
+	<div class="wrap white">
+		<div class="work">
+			<div class="about">
+				{#each postsAbout as post}
+					<div class="photoBlock">
+						<div class="photo">
+							{#if $isAdmin}
+							<BtnEdit 
+								on:getData={(event) => { masspopup = event.detail; }} 
+								dataEdit={post}
+								typeEvent='Update'
+								fields={[
+									{field: 'image', type: 'image', alt: post.image_alt, cropSize: {width: 400, height: 400}}
+								]} 
+							/>
+							{/if}
+							<img src="{post.image}" alt="{post.image_alt}" itemprop="image" />
+						</div>
 					</div>
-				</div>
-				<div class="about__content">
-					<h1 class="about__title">
-						{post.title}
-						{#if $isAdmin}
-						<BtnEdit 
-							on:getData={(event) => { masspopup = event.detail; }} 
-							dataEdit={post} 
-							typeEvent='Update'
-							fields={[
-								{field: 'title', type: 'input'}, 
-								{field: 'subtitle', type: 'input'}, 
-								{field: 'text', type: 'textarea'}
-							]} 
-						/>
-						{/if}
-					</h1>
-					<div class="about__subtitle">{post.subtitle}</div>
-					<ul class="about__soclist">
-						<li class="about__socitem">
-							<a href="/" class="about__soclink in">1</a>
-						</li>
-						<li class="about__socitem">
-							<a href="/" class="about__soclink fb">1</a>
-						</li>
-						<li class="about__socitem">
-							<a href="/" class="about__soclink yt">1</a>
-						</li>
-					</ul>
-					<div class="about__text">{@html post.text}</div>
-				</div>
-			{/each}
+					<div class="about__content">
+						<h1 class="about__title" itemprop="name">
+							{post.title}
+							{#if $isAdmin}
+							<BtnEdit 
+								on:getData={(event) => { masspopup = event.detail; }} 
+								dataEdit={post} 
+								typeEvent='Update'
+								fields={[
+									{field: 'title', type: 'input'}, 
+									{field: 'subtitle', type: 'input'}, 
+									{field: 'text', type: 'textarea'}
+								]} 
+							/>
+							{/if}
+						</h1>
+						<div class="about__subtitle" itemprop="jobTitle">{post.subtitle}</div>
+						<ul class="about__soclist">
+							<li class="about__socitem">
+								<a href="/" class="about__soclink in">1</a>
+							</li>
+							<li class="about__socitem">
+								<a href="/" class="about__soclink fb">1</a>
+							</li>
+							<li class="about__socitem">
+								<a href="/" class="about__soclink yt">1</a>
+							</li>
+						</ul>
+						<div class="about__text" itemprop="description">{@html post.text}</div>
+					</div>
+				{/each}
+			</div>
 		</div>
 	</div>
-</div>
-<div class="wrap">
-	<div class="work">
-		<Chronology title='Образование' catName='education' data={postsEducation} on:getData={(event) => { masspopup = event.detail; }}  />
+	<div class="wrap">
+		<div class="work">
+			<Chronology title='Образование' catName='education' data={postsEducation} on:getData={(event) => { masspopup = event.detail; }}  />
+		</div>
 	</div>
-</div>
-<div class="wrap white">
-	<div class="work">
-		<Chronology title='Карьера' catName='career' data={postsCareer} on:getData={(event) => { masspopup = event.detail; }} />
+	<div class="wrap white">
+		<div class="work">
+			<Chronology title='Карьера' catName='career' data={postsCareer} on:getData={(event) => { masspopup = event.detail; }} />
+		</div>
 	</div>
 </div>
 
