@@ -76,7 +76,7 @@
 
 <div class="wrap">
 	<div class="work">
-		<TitleContainer title="Верстка" />
+		<TitleContainer title="JS" />
 		<Catalog {posts} category="js" cat="js" {user} on:getData={(event) => { masspopup = event.detail; }} on:addData={(event) => { masspopup = event.detail; }} />
 	</div>
 </div>

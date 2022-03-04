@@ -1,0 +1,79 @@
+/********************************************** listGoods ******************************************/
+.listGoods{
+  display: flex;
+  flex-wrap: wrap;
+  width: calc(100% + 20px);
+  margin-left: -10px;
+}
+
+.listGoods .good{
+  order: 2;
+  width: calc(100%/3 - 20px);
+  box-sizing: border-box;
+  margin: 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.listGoods .good:nth-child(-n+4){
+  order: 0;
+}
+
+.listGoods .banner{
+  order: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100%/3 - 20px);
+  min-height: 250px;
+  box-sizing: border-box;
+  margin: 10px;
+  border: 1px solid red;
+  background-color: red;
+  color: #fff;
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.listGoods .image{
+  position: relative;
+  width: 100%;
+}
+
+.listGoods .image img{
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.listGoods .title{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 0 20px 20px 20px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 18px;
+}
+
+.listGoods .description{
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  background-color: #fcfcfc;
+  font-size: 14px;
+  line-height: 1.5em;
+}
+/********************************************** listGoods ******************************************/
+
+@media only screen and (max-width: 767px){
+  .listGoods .good, .banner{
+    width: calc(100%/2 - 20px);
+  }
+}
+
+@media only screen and (max-width: 539px){
+  .listGoods .good, .banner{
+    width: calc(100% - 20px);
+  }
+}

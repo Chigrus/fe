@@ -2,7 +2,7 @@
 	export let title = 'Заголовок';
 </script>
 
-<div class="titleline">{title}</div>
+<h1 class="titleline">{title}</h1>
 
 <style>
 	.titleline{
