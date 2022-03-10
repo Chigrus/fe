@@ -200,6 +200,8 @@
     float: left;
     width: 100%;
     padding-top: 10px;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
 }
 
 .line{
