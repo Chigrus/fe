@@ -1,13 +1,29 @@
 <script context="module">
-	export function preload({params}) {;
-		const req1 = this.fetch('/post?slug=' + params.slug).then(r => r.json())
-		const req2 = this.fetch('/opengraph?name=' + params.slug).then(r => r.json())
-		const req3 = this.fetch('token').then(r => r.json())
+	const responseHandler = (defaultResponse = null) => res => {
+		if (res.status !== 200) {
+			return null;
+		}
+		return res.json();
+	};
+	export function preload({params}){
+		const datapar = {cat: 'layout', slug: params.slug, amount: 3};
+		const req1 = this.fetch('/post?slug=' + params.slug).then(responseHandler({}))
+		const req2 = this.fetch('/opengraph?name=' + params.slug).then(responseHandler([]))
+		const req3 = this.fetch('/latest-posts', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				datapar,
+			}),
+		}).then(responseHandler([]))
+		const req4 = this.fetch('token').then(responseHandler({}))
 		return 	Promise.all([
-			req1, req2, req3
+			req1, req2, req3, req4
 		])
-		.then(([post, opengraph, user]) => {
-			return { post, opengraph, user };
+		.then(([post, opengraph, latestsposts, user]) => {
+			return { post, opengraph, latestsposts, user };
 		})
 	}
 </script>
@@ -17,7 +33,6 @@
 	import { isAdmin } from '../../store.js';
 	import BtnEdit from '../../components/BtnEdit.svelte';
 	import PopupAddContent from '../../components/PopupAddContent.svelte';
-	import OpenGraph from '../../components/OpenGraph.svelte';
 	import AdminButtons from '../../components/AdminButtons.svelte';
 	import BtnAdminEdit from '../../components/BtnAdminEdit.svelte';
 	import OpenGraphEditor from '../../components/OpenGraphEditor.svelte';
@@ -31,9 +46,10 @@
 	import { savePostJson } from '../../requests';
 
 	export let user;
-	isAdmin.set(user.isAdmin);
 	export let post;
+	export let latestsposts;
 	export let opengraph;
+	isAdmin.set(user.isAdmin);
 
 	let masspopup = {
 		popup: false,
@@ -43,15 +59,14 @@
 	
 	let id;
 
-	const datePost = post[0].date.substring(0, 10).split('-');
+	$: datePost = post[0].date.substring(0, 10).split('-');
 
-	let textPost = post[0].post;
 	let isAdminV = false;
 	let idPost;
 	let idAddNode;
 	let isAddNode = false;
-
-	textPost = textPost.sort((a, b) => a.id - b.id);
+	
+	$: textPost = post[0].post.sort((a, b) => a.id - b.id);
 
 	let isOpenGraphEdit = false;
 
@@ -119,8 +134,26 @@
 </script>
 
 <svelte:head>
-	<OpenGraph opengraph={opengraph[0]} />
-	{#if post[0].includecss != ''}
+	<title>{opengraph[0].title}</title>
+	<meta name="description" content="{opengraph[0].description}" />
+	<meta property="og:type" content="{opengraph[0].og_type}" />
+	<meta property="og:title" content="{opengraph[0].og_title}" />
+	<meta property="og:description" content="{opengraph[0].og_description}" />
+	<meta property="og:url" content="{opengraph[0].og_url}">
+	<meta property="og:image" content="{opengraph[0].og_image}">
+	<meta property="og:image:type" content="{opengraph[0].og_image_type}" />
+	<meta property="og:image:width" content="{opengraph[0].og_image_width}">
+	<meta property="og:image:height" content="{opengraph[0].og_image_height}">
+	<meta name="twitter:title" content="{opengraph[0].og_title}">
+	<meta name="twitter:description" content="{opengraph[0].og_description}">
+	{#if opengraph[0].og_type === 'profile'}
+	<meta property="og:profile:first_name" content="{opengraph[0].og_profile.first_name}" />
+	<meta property="og:profile:last_name" content="{opengraph[0].og_profile.last_name}" />
+	<meta property="og:profile:username" content="{opengraph[0].og_profile.username}" />
+	<meta property="og:profile:gender" content="{opengraph[0].og_profile.gender}" />
+	{/if}
+
+	{#if post[0].includecss}
 		<link rel="stylesheet" href="{post[0].includecss}">
 	{/if}
 </svelte:head>
@@ -131,7 +164,9 @@
 
 {#if $isAdmin}
 <AdminButtons>
-	<BtnAdminEdit title="" bg="opengraph" on:click="{openGraphEdit}" />
+	{#if opengraph[0].id != 0}
+		<BtnAdminEdit title="" bg="opengraph" on:click="{openGraphEdit}" />
+	{/if}
 </AdminButtons>
 {/if}
 
@@ -186,7 +221,8 @@
 					{/if}
 					{#each textPost as post}
 						<PostTag 
-							bind:post={post} {isAdminV}
+							post={post} 
+							isAdminV={isAdminV}
 							on:addPostNode={(event) => addPost(event.detail.idPost)}
 							on:upPostNode={(event) => upPost(event.detail.idPost)}
 							on:downPostNode={(event) => downPost(event.detail.idPost)}
@@ -197,13 +233,15 @@
 			</div>
 			<div class="sidebar">
 				<Widget>
-					<div slot="title">Свежие публикации</div>
+					<div slot="title">Свежие публикации:</div>
 					<div slot="content">
-						<WidgetPost />
+						{#each latestsposts as latestpost}
+							<WidgetPost bind:latestpost={latestpost} />
+						{/each}
 					</div>
 				</Widget>
 				<Widget>
-					<div slot="title">Мои ролики на ютубе</div>
+					<div slot="title">Мои ролики на ютубе:</div>
 					<div slot="content">
 						<WidgetYoutube />
 						<WidgetYoutube />

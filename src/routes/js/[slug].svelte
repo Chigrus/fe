@@ -1,12 +1,29 @@
 <script context="module">
-	export function preload({params}) {
-		const req1 = this.fetch('post?slug=' + params.slug).then(r => r.json())
-		const req2 = this.fetch('token').then(r => r.json())
+	const responseHandler = (defaultResponse = null) => res => {
+		if (res.status !== 200) {
+			return null;
+		}
+		return res.json();
+	};
+	export function preload({params}){
+		const datapar = {cat: 'layout', slug: params.slug, amount: 2};
+		const req1 = this.fetch('/post?slug=' + params.slug).then(responseHandler({}))
+		const req2 = this.fetch('/opengraph?name=' + params.slug).then(responseHandler([]))
+		const req3 = this.fetch('/latest-posts', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				datapar,
+			}),
+		}).then(responseHandler([]))
+		const req4 = this.fetch('token').then(responseHandler({}))
 		return 	Promise.all([
-			req1, req2
+			req1, req2, req3, req4
 		])
-		.then(([post, user]) => {
-			return { post, user };
+		.then(([post, opengraph, latestsposts, user]) => {
+			return { post, opengraph, latestsposts, user };
 		})
 	}
 </script>
@@ -16,13 +33,23 @@
 	import { isAdmin } from '../../store.js';
 	import BtnEdit from '../../components/BtnEdit.svelte';
 	import PopupAddContent from '../../components/PopupAddContent.svelte';
+	import AdminButtons from '../../components/AdminButtons.svelte';
+	import BtnAdminEdit from '../../components/BtnAdminEdit.svelte';
+	import OpenGraphEditor from '../../components/OpenGraphEditor.svelte';
 	import Widget from '../../components/Widget.svelte';
 	import WidgetPost from '../../components/WidgetPost.svelte';
 	import WidgetYoutube from '../../components/WidgetYoutube.svelte';
 
+	import PostTag from '../../components/PostTag.svelte';
+	import Popup from '../../components/Popup.svelte';
+	import TagsInsert from '../../components/TagsInsert.svelte';
+	import { savePostJson } from '../../requests';
+
 	export let user;
-	isAdmin.set(user.isAdmin);
 	export let post;
+	export let latestsposts;
+	export let opengraph;
+	isAdmin.set(user.isAdmin);
 
 	let masspopup = {
 		popup: false,
@@ -32,16 +59,125 @@
 	
 	let id;
 
-	const datePost = post[0].date.substring(0, 10).split('-');
+	$: datePost = post[0].date.substring(0, 10).split('-');
+
+	let isAdminV = false;
+	let idPost;
+	let idAddNode;
+	let isAddNode = false;
+	
+	$: textPost = post[0].post.sort((a, b) => a.id - b.id);
+
+	let isOpenGraphEdit = false;
+
+	function openGraphEdit(){
+		isOpenGraphEdit = true;
+	}
+
+	function editPost(){
+		isAdminV = true;
+	}
+
+	function previewPost(){
+		isAdminV = false;
+	}
+
+	async function savePostFn(){
+		savePostJson(textPost, {tableName: 'posts', id: post[0].id});
+	}
+
+	function delPost(id){
+		textPost = textPost.filter((item) => item.id !== id);
+		for (var key in textPost) {
+			if (key >= id-1 ){
+				textPost[key].id = textPost[key].id - 1;
+			}
+		}
+	}
+
+	function upPost(id){
+		if(id != 1){
+			textPost[id-1].id = id-1;
+			textPost[id-2].id = id;
+			textPost.sort((a, b) => a.id - b.id);
+		};
+	}
+
+	function downPost(id){
+		if(id != textPost.length){
+			textPost[id-1].id = id+1;
+			textPost[id].id = id;
+			textPost.sort((a, b) => a.id - b.id);
+		};
+	}
+
+	function addPost(id){
+		isAddNode = true;
+		idAddNode = id;
+	}
+
+	function addNode(typeNode, contentInner){
+		if(idAddNode === textPost.length){
+			textPost = [...textPost, {id: idAddNode+1, type: typeNode, content: contentInner}];
+		}else{
+			for (var key in textPost) {
+				if (key >= idAddNode && key != textPost.length){
+					textPost[key].id = textPost[key].id + 1;
+				}
+			}
+			textPost = [...textPost, {id: idAddNode+1, type: typeNode, content: contentInner}];
+			textPost.sort((a, b) => a.id - b.id);
+		}
+		isAddNode = false;
+	}
 
 </script>
 
 <svelte:head>
-	<title>{post[0].title}</title>
-	{#if post[0].includecss != ''}
+	<title>{opengraph[0].title}</title>
+	<meta name="description" content="{opengraph[0].description}" />
+	<meta property="og:type" content="{opengraph[0].og_type}" />
+	<meta property="og:title" content="{opengraph[0].og_title}" />
+	<meta property="og:description" content="{opengraph[0].og_description}" />
+	<meta property="og:url" content="{opengraph[0].og_url}">
+	<meta property="og:image" content="{opengraph[0].og_image}">
+	<meta property="og:image:type" content="{opengraph[0].og_image_type}" />
+	<meta property="og:image:width" content="{opengraph[0].og_image_width}">
+	<meta property="og:image:height" content="{opengraph[0].og_image_height}">
+	<meta name="twitter:title" content="{opengraph[0].og_title}">
+	<meta name="twitter:description" content="{opengraph[0].og_description}">
+	{#if opengraph[0].og_type === 'profile'}
+	<meta property="og:profile:first_name" content="{opengraph[0].og_profile.first_name}" />
+	<meta property="og:profile:last_name" content="{opengraph[0].og_profile.last_name}" />
+	<meta property="og:profile:username" content="{opengraph[0].og_profile.username}" />
+	<meta property="og:profile:gender" content="{opengraph[0].og_profile.gender}" />
+	{/if}
+
+	{#if post[0].includecss}
 		<link rel="stylesheet" href="{post[0].includecss}">
 	{/if}
 </svelte:head>
+
+{#if isOpenGraphEdit}
+	<OpenGraphEditor bind:dataOpenGraph={opengraph[0]}  bind:isOpenGraphEdit={isOpenGraphEdit} />
+{/if}
+
+{#if $isAdmin}
+<AdminButtons>
+	{#if opengraph[0].id != 0}
+		<BtnAdminEdit title="" bg="opengraph" on:click="{openGraphEdit}" />
+	{/if}
+</AdminButtons>
+{/if}
+
+<Popup bind:isOpen={isAddNode}>
+	<slot slot="title">
+		Добавить новый блок
+	</slot>
+	<slot slot="content">
+		<TagsInsert on:onSelectNode={(event) => addNode(event.detail.typeNode, event.detail.contentInner)} />
+	</slot>
+</Popup>
 
 {#if masspopup.popup}
 	<PopupAddContent 
@@ -61,30 +197,51 @@
 	<div class="work">
 		<div class="container">
 			<div class="content">
-				{#if $isAdmin}
-					<BtnEdit 
-						on:getData={(event) => { masspopup = event.detail; }} 
-						typeEvent='Update'
-						dataEdit={post[0]} 
-						fields={[
-							{field: 'title', type: 'input'},
-							{field: 'text', type: 'textarea'}
-						]} 
-					/>
+				<h1 class="title">
+					{#if $isAdmin}
+						<BtnEdit 
+							on:getData={(event) => { masspopup = event.detail; }} 
+							typeEvent='Update'
+							dataEdit={post[0]} 
+							fields={[
+								{field: 'title', type: 'input'},
+							]} 
+						/>
 					{/if}
-				<h1 class="title">{post[0].title}</h1>
+					{post[0].title}
+				</h1>
 				<div class="date">Дата публикации: {datePost[2]}.{datePost[1]}.{datePost[0]}</div>
-				<div class="post">{@html post[0].text}</div>
+				<div class="post">
+					{#if $isAdmin}
+					<div class="btns">
+						<div class="btn edit" on:click={editPost}>Редактор</div>
+						<div class="btn preview" on:click={previewPost}>Просмотр</div>
+						<div class="btn save" on:click={savePostFn}>Сохранить</div>
+					</div>
+					{/if}
+					{#each textPost as post}
+						<PostTag 
+							post={post} 
+							isAdminV={isAdminV}
+							on:addPostNode={(event) => addPost(event.detail.idPost)}
+							on:upPostNode={(event) => upPost(event.detail.idPost)}
+							on:downPostNode={(event) => downPost(event.detail.idPost)}
+							on:delPostNode={(event) => delPost(event.detail.idPost)}
+						/>
+					{/each}
+				</div>
 			</div>
 			<div class="sidebar">
 				<Widget>
-					<div slot="title">Свежие публикации</div>
+					<div slot="title">Свежие публикации:</div>
 					<div slot="content">
-						<WidgetPost />
+						{#each latestsposts as latestpost}
+							<WidgetPost bind:latestpost={latestpost} />
+						{/each}
 					</div>
 				</Widget>
 				<Widget>
-					<div slot="title">Мои ролики на ютубе</div>
+					<div slot="title">Мои ролики на ютубе:</div>
 					<div slot="content">
 						<WidgetYoutube />
 						<WidgetYoutube />
@@ -100,81 +257,44 @@
 	float: left;
 	width: 100%;
 	padding: 50px 0;
-}	
+}
+
 .content{
-	position: relative;
 	float: left;
 	width: calc(100% - 300px);
 }
+
 .title{
+	position: relative;
 	float: left;
 	width: 100%;
 	text-transform: uppercase;
 	font-size: 22px;
 }
+
 .post{
 	float: left;
 	width: 100%;
 }
 
-:global(.post .quoteBlock){
-	position: relative;
-	display: inline-block;
+.btns{
 	width: 100%;
-	margin: 10px 0;
-	box-sizing: border-box;
-	padding: 15px 0 15px 110px;
+	margin-bottom: 20px;
+	display: flex;
+	justify-content: flex-end;
 }
 
-:global(.post .quoteBlock::before){
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 92px;
-	width: 3px;
-	height: 100%;
-	background-color: #cb442e;
+.btn{
+	padding: 5px 10px;
+	background-color: green;
+	color: #fff;
+	margin-left: 10px;
+	cursor: pointer;
+	font-size: 12px;
 }
 
-:global(.post .quoteBlock::after){
-	content: '';
-	position: absolute;
-	top: 50%;
-	left: 15px;
-	width: 64px;
-	height: 64px;
-	margin-top: -32px;
-	background-image: url(/svg/quoteBlock.svg);
-	background-position: center center;
-	background-repeat: no-repeat;
-	background-size: cover;
-}
-
-:global(.post .quoteTitle){
-	display: inline-block;
-	background-color: rgba(0,0,0,0.7);
-    color: #fff;
-    padding: 5px 15px;
-}
-
-:global(.post .javascript),
-:global(.post .sass),
-:global(.post .html5){
-	max-width: 100%;
-    overflow-x: auto;
-	padding: 2px 5px;
-	background-color: rgba(0,0,0,0.05);
-	border: 1px solid rgba(0,0,0,0.3);
-	box-sizing: border-box;
-	tab-size: 1em;
-}
-
-:global(.post .quoteText){
-	display: inline-block;
-    width: 100%;
-    line-height: 1.5em;
-    font-size: 16px;
-	margin-top: 10px;
+.btn:first-child{
+	margin-left: 0;
 }
 
 .sidebar{
