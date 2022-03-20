@@ -196,8 +196,8 @@
 <div class="wrap">
 	<div class="work">
 		<div class="container">
-			<div class="content">
-				<h1 class="title">
+			<div class="content" itemscope itemtype="//schema.org/Article">
+				<h1 class="title" itemprop="headline">
 					{#if $isAdmin}
 						<BtnEdit 
 							on:getData={(event) => { masspopup = event.detail; }} 
@@ -210,8 +210,8 @@
 					{/if}
 					{post[0].title}
 				</h1>
-				<div class="date">Дата публикации: {datePost[2]}.{datePost[1]}.{datePost[0]}</div>
-				<div class="post">
+				<div class="date" itemprop="datePublished">Дата публикации: {datePost[2]}.{datePost[1]}.{datePost[0]}</div>
+				<div class="post" itemprop="description">
 					{#if $isAdmin}
 					<div class="btns">
 						<div class="btn edit" on:click={editPost}>Редактор</div>
@@ -230,6 +230,7 @@
 						/>
 					{/each}
 				</div>
+				<div class="author">Автор статьи: <span itemprop="author">Иван Чернов</span></div>
 			</div>
 			<div class="sidebar">
 				<Widget>
@@ -302,6 +303,10 @@
 	width: 300px;
 	box-sizing: border-box;
 	padding-left: 40px;
+}
+
+.author{
+	width: 100%;
 }
 
 @media only screen and (max-width: 1199px){
